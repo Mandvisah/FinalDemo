@@ -1,0 +1,11 @@
+{
+  "file": "sample5104.csv",
+  "keystrokes": 17,
+  "ensemble_prediction": "Legitimate",
+  "ensemble_confidence": 91.638126122657,
+  "best_model_prediction": "Legitimate",
+  "best_model_confidence": 99.99999874314544,
+  "security_level": "MEDIUM",
+  "anomaly_score": 14.745588235294122,
+  "all_predictions": {
+    "RandomForest": 

@@ -1,0 +1,11 @@
+{
+  "best_model": "GradientBoosting",
+  "available_models": [
+    "RandomForest",
+    "LightGBM",
+    "XGBoost",
+    "GradientBoosting"
+  ],
+  "feature_count": 25,
+  "training_date": "2025-12-18T21:45:21.689282"
+}

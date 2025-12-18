@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keystroke Dynamics Authentication</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .password-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .results {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .result-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background: white;
+            border-left: 4px solid #3498db;
+        }
+        
+        .status-authentic {
+            border-left-color: #27ae60;
+            background: #d5f4e6;
+        }
+        
+        .status-impostor {
+            border-left-color: #e74c3c;
+            background: #fadbd8;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .security-high { color: #27ae60; }
+        .security-medium { color: #f39c12; }
+        .security-low { color: #e74c3c; }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Keystroke Dynamics</h1>
+            <p>Advanced Behavioral Biometric Authentication</p>
+        </div>
+        
+        <div class="content">
+            <div class="input-group">
+                <label for="passwordInput">Type your password to authenticate:</label>
+                <input type="password" id="passwordInput" class="password-input" 
+                       placeholder="Enter your password..." autocomplete="off">
+                <small style="color: #7f8c8d; margin-top: 5px; display: block;">
+                    Your typing rhythm will be analyzed for authentication
+                </small>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="startAuthentication()">
+                    🔒 Authenticate
+                </button>
+                <button class="btn btn-secondary" onclick="clearInput()">
+                    🗑️ Clear
+                </button>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analyzing your typing pattern...</p>
+            </div>
+            
+            <div class="results" id="results">
+                <div class="result-item" id="authResult">
+                    <h3>Authentication Result</h3>
+                    <p id="resultText">Processing...</p>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="confidenceValue">0%</div>
+                        <div class="stat-label">Confidence Score</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="securityLevel">-</div>
+                        <div class="stat-label">Security Level</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="anomalyScore">0%</div>
+                        <div class="stat-label">Anomaly Detection</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="keystrokeCount">0</div>
+                        <div class="stat-label">Keystrokes Analyzed</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; font-size: 0.9em; color: #7f8c8d;">
+                    <p><strong>How it works:</strong> This system analyzes your unique typing rhythm, including key press duration, flight time between keys, and typing patterns to verify your identity.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
