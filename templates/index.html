@@ -12,62 +12,89 @@
     <div class="aurora"></div>
     <div class="aurora-overlay"></div>
 
-    <div class="container">
-        <div class="glass-card">
-            <div class="header animate-fade-up">
-                <i class="fas fa-fingerprint logo-icon animate-float"></i>
-                <h2>Authentication Dashboard</h2>
+    <div class="container" style="max-width: 800px;">
+        <!-- User Header -->
+        <div class="glass-card animate-fade-up user-header">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="user-avatar">
+                    <i class="fas fa-user" style="color: white; font-size: 0.9rem;"></i>
+                </div>
+                <div>
+                    <small style="color: var(--text-muted); display: block; font-size: 0.75rem; line-height: 1;">Welcome back,</small>
+                    <span style="font-weight: 600; color: var(--text-main); font-size: 1rem;">{{ session.get('user_name', 'User') }}</span>
+                </div>
+            </div>
+            <a href="{{ url_for('logout') }}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </a>
+        </div>
+
+        <!-- Main Dashboard Card -->
+        <div class="glass-card animate-fade-up delay-1">
+            <div class="header" style="margin-bottom: 30px;">
+                <i class="fas fa-fingerprint logo-icon animate-float" style="font-size: 3rem;"></i>
+                <h2 style="margin-top: 10px;">Authentication Dashboard</h2>
                 <p>Verify your identity using keystroke dynamics</p>
             </div>
             
-            <div class="content animate-fade-up delay-1">
-                <div class="form-group">
-                    <label for="passwordInput" style="color: var(--text-muted); margin-bottom: 10px; display: block;">Type your password to authenticate:</label>
-                    <div class="input-wrapper">
-                        <input type="password" id="passwordInput" class="form-control" placeholder="Enter your password..." autocomplete="off">
-                        <i class="fas fa-keyboard input-icon"></i>
+            <div class="content">
+                <div class="form-group" style="text-align: center;">
+                    <div class="instruction-badge">
+                        <i class="fas fa-terminal" style="color: #00f2ff;"></i>
+                        <span style="color: var(--text-muted);">Please type:</span>
+                        <span class="password-display">securepassword123</span>
                     </div>
-                    <small style="color: var(--text-muted); margin-top: 5px; display: block;">
-                        Your typing rhythm will be analyzed for authentication
+
+                    <div class="input-wrapper" style="max-width: 400px; margin: 0 auto;">
+                        <input type="password" id="passwordInput" class="form-control dashboard-input" placeholder="Start typing here..." autocomplete="off" onpaste="return false;" oncopy="return false;" oncut="return false;" ondrop="return false;">
+                        <i class="fas fa-keyboard input-icon" style="left: 20px;"></i>
+                    </div>
+                    <small style="color: var(--text-muted); margin-top: 10px; display: block;">
+                        <i class="fas fa-wave-square" style="margin-right: 5px; color: #00f2ff;"></i>
+                        Analyzing flight time & dwell time
                     </small>
                 </div>
 
-                <div class="button-group" style="display: flex; gap: 15px; margin-top: 20px;">
-                    <button class="btn-submit" onclick="startAuthentication()">
-                        <i class="fas fa-lock"></i> Authenticate
+                <div class="button-group" style="display: flex; gap: 15px; margin-top: 30px; justify-content: center;">
+                    <button class="btn-submit" onclick="startAuthentication()" style="max-width: 200px;">
+                        <i class="fas fa-shield-alt"></i> Authenticate
                     </button>
-                    <button class="btn-submit" onclick="clearInput()" style="background: rgba(255,255,255,0.1); box-shadow: none;">
-                        <i class="fas fa-trash"></i> Clear
+                    <button class="btn-submit btn-reset" onclick="clearInput()" style="max-width: 150px;">
+                        <i class="fas fa-redo"></i> Reset
                     </button>
                 </div>
 
-                <div class="loading" id="loading" style="display: none; text-align: center; margin-top: 20px;">
-                    <div class="spinner" style="border: 4px solid rgba(255,255,255,0.1); border-top: 4px solid #00f2ff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
-                    <p style="color: var(--text-muted); margin-top: 10px;">Analyzing your typing pattern...</p>
+                <div class="loading" id="loading" style="display: none; text-align: center; margin-top: 30px;">
+                    <div class="loading-spinner"></div>
+                    <p style="color: var(--text-muted); margin-top: 15px; font-size: 0.9rem;">Processing biometric data...</p>
                 </div>
 
-                <div class="results" id="results" style="display: none; margin-top: 30px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px;">
-                    <div class="result-item" id="authResult" style="margin-bottom: 20px; text-align: center;">
-                        <h3 style="color: var(--text-main);">Authentication Result</h3>
-                        <p id="resultText" style="font-size: 1.2em; margin-top: 10px;">Processing...</p>
+                <div class="results results-container" id="results" style="display: none;">
+                    <div class="result-item" id="authResult" style="margin-bottom: 25px; text-align: center; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <h3 style="color: var(--text-main); margin-bottom: 10px;">Authentication Result</h3>
+                        <p id="resultText" style="font-size: 1.1em; line-height: 1.6;">Processing...</p>
                     </div>
                     
-                    <div class="stats" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div class="stat-card" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; text-align: center;">
-                            <div class="stat-value" id="confidenceValue" style="font-size: 1.5em; font-weight: bold; color: #00f2ff;">0%</div>
-                            <div class="stat-label" style="color: var(--text-muted); font-size: 0.9em;">Confidence Score</div>
+                    <div class="stats stats-grid">
+                        <div class="stat-card-dashboard">
+                            <i class="fas fa-chart-line" style="color: #00f2ff; font-size: 1.2rem; margin-bottom: 8px; opacity: 0.8;"></i>
+                            <div class="stat-value" id="confidenceValue" style="font-size: 1.4em; font-weight: 700; color: #ffffff;">0%</div>
+                            <div class="stat-label" style="color: var(--text-muted); font-size: 0.8em;">Confidence</div>
                         </div>
-                        <div class="stat-card" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; text-align: center;">
-                            <div class="stat-value" id="securityLevel" style="font-size: 1.5em; font-weight: bold; color: var(--text-main);">-</div>
-                            <div class="stat-label" style="color: var(--text-muted); font-size: 0.9em;">Security Level</div>
+                        <div class="stat-card-dashboard">
+                            <i class="fas fa-shield-virus" style="color: #ff00cc; font-size: 1.2rem; margin-bottom: 8px; opacity: 0.8;"></i>
+                            <div class="stat-value" id="securityLevel" style="font-size: 1.4em; font-weight: 700; color: #ffffff;">-</div>
+                            <div class="stat-label" style="color: var(--text-muted); font-size: 0.8em;">Security Level</div>
                         </div>
-                        <div class="stat-card" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; text-align: center;">
-                            <div class="stat-value" id="anomalyScore" style="font-size: 1.5em; font-weight: bold; color: #ff00cc;">0%</div>
-                            <div class="stat-label" style="color: var(--text-muted); font-size: 0.9em;">Anomaly Detection</div>
+                        <div class="stat-card-dashboard">
+                            <i class="fas fa-exclamation-triangle" style="color: #ff9f43; font-size: 1.2rem; margin-bottom: 8px; opacity: 0.8;"></i>
+                            <div class="stat-value" id="anomalyScore" style="font-size: 1.4em; font-weight: 700; color: #ffffff;">0%</div>
+                            <div class="stat-label" style="color: var(--text-muted); font-size: 0.8em;">Anomaly Score</div>
                         </div>
-                        <div class="stat-card" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; text-align: center;">
-                            <div class="stat-value" id="keystrokeCount" style="font-size: 1.5em; font-weight: bold; color: var(--text-main);">0</div>
-                            <div class="stat-label" style="color: var(--text-muted); font-size: 0.9em;">Keystrokes Analyzed</div>
+                        <div class="stat-card-dashboard">
+                            <i class="fas fa-keyboard" style="color: #1dd1a1; font-size: 1.2rem; margin-bottom: 8px; opacity: 0.8;"></i>
+                            <div class="stat-value" id="keystrokeCount" style="font-size: 1.4em; font-weight: 700; color: #ffffff;">0</div>
+                            <div class="stat-label" style="color: var(--text-muted); font-size: 0.8em;">Keystrokes</div>
                         </div>
                     </div>
                 </div>

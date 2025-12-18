@@ -86,6 +86,11 @@ def dashboard():
         return redirect(url_for('login'))
     return render_template('index.html')
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
+
 @app.route('/record', methods=['POST'])
 def record_keystrokes():
     data = request.json
