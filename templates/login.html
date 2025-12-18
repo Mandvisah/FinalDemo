@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Keystroke Dynamics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='script.css') }}">
+</head>
+<body>
+    <!-- Dynamic Background -->
+    <div class="aurora"></div>
+    <div class="aurora-overlay"></div>
+
+    <div class="container">
+        <div class="glass-card">
+            <div class="header">
+                <i class="fas fa-fingerprint logo-icon"></i>
+                <h2>Welcome Back</h2>
+                <p>Secure authentication via Keystroke Dynamics</p>
+            </div>
+            
+            {% if error %}
+            <div style="color: #ff4444; background: rgba(255, 68, 68, 0.1); padding: 10px; border-radius: 10px; margin-bottom: 20px; text-align: center; border: 1px solid rgba(255, 68, 68, 0.2);">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form action="/login" method="POST">
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <input type="email" id="email" name="email" class="form-control" placeholder="Email Address" required>
+                        <i class="fas fa-envelope input-icon"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+                        <i class="fas fa-lock input-icon"></i>
+                    </div>
+                </div>
+
+                <a href="#" class="forgot-pass">Forgot Password?</a>
+
+                <button type="submit" class="btn-submit">
+                    LOG IN
+                </button>
+
+                <div class="divider">
+                    <span>Or continue with</span>
+                </div>
+
+                <div class="social-login">
+                    <a href="#" class="social-btn"><i class="fab fa-google"></i></a>
+                    <a href="#" class="social-btn"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-btn"><i class="fab fa-microsoft"></i></a>
+                </div>
+
+                <div class="footer-text">
+                    New here? <a href="/register">Create Account</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

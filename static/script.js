@@ -27,7 +27,7 @@ passwordInput.addEventListener("keydown", (event) => {
     // If Enter is pressed, submit instead of creating newline
     if (key === "Enter") {
         event.preventDefault();
-        sendData();
+        startAuthentication();
         return;
     }
 
@@ -130,16 +130,20 @@ function displayResults(data) {
 
 function showLoading(show) {
     const loadingDiv = document.getElementById("loading");
-    const button = document.querySelector(".btn-primary");
+    const button = document.querySelector(".btn-submit");
     
     if (show) {
         loadingDiv.style.display = "block";
-        button.disabled = true;
-        button.textContent = "Processing...";
+        if (button) {
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        }
     } else {
         loadingDiv.style.display = "none";
-        button.disabled = false;
-        button.textContent = "🔒 Authenticate";
+        if (button) {
+            button.disabled = false;
+            button.innerHTML = '<i class="fas fa-lock"></i> Authenticate';
+        }
     }
 }
 
